@@ -9,8 +9,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.view.View;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,12 +20,25 @@ public class MainActivity extends AppCompatActivity {
     boolean empezarNuevoNumero = true;
     private double primerNumero;
     private String operacionPendiente = "";
+    private boolean usarGrados = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        Switch switchModo = findViewById(R.id.Switch);
+
+        switchModo.setOnCheckedChangeListener((buttonView, activado) -> {
+            usarGrados = activado;
+
+            if (activado) {
+                switchModo.setText("Grados");
+            } else {
+                switchModo.setText("Radianes");
+            }
+        });
 
         display = findViewById(R.id.textView);
 
@@ -62,6 +77,15 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.buttonClear)
                 .setOnClickListener(v -> limpiarCalculadora());
+
+        findViewById(R.id.buttonSin)
+                .setOnClickListener(v -> calcularTrigonometria("sin"));
+
+        findViewById(R.id.buttonCos)
+                .setOnClickListener(v -> calcularTrigonometria("cos"));
+
+        findViewById(R.id.buttonTan)
+                .setOnClickListener(v -> calcularTrigonometria("tan"));
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -152,5 +176,42 @@ public class MainActivity extends AppCompatActivity {
         primerNumero = 0;           // Elimina el numero guardado
         operacionPendiente = "";    // Cancela la operacion
         empezarNuevoNumero = true;  // La proxima cifra empieza un número nuevo
+    }
+
+    private void calcularTrigonometria(String funcion) {
+        String textoActual = display.getText().toString();
+
+        if (textoActual.isEmpty() || textoActual.contains("Error")) {
+            return;
+        }
+
+        double angulo = Double.parseDouble(textoActual);
+
+        if (usarGrados) {
+            angulo = Math.toRadians(angulo);
+        }
+
+        double resultado;
+
+        switch (funcion) {
+            case "sin":
+                resultado = Math.sin(angulo);
+                break;
+
+            case "cos":
+                resultado = Math.cos(angulo);
+                break;
+
+            case "tan":
+                resultado = Math.tan(angulo);
+                break;
+
+            default:
+                return;
+        }
+        resultado = Math.round(resultado * 1_000_000.0) / 1_000_000.0; //redondear el eerror de los doubles
+        display.setText(String.valueOf(resultado));
+        operacionPendiente = "";
+        empezarNuevoNumero = true;
     }
 }
