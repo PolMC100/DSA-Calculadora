@@ -2,12 +2,12 @@ Build a simple calculator in Android. It should have only one Activity and you m
 
 It should have the following operations:
 
-- [] Add
-- [] Substract 
-- [] Multiply
-- [] Division
-- [] Equals (Execute the operation)
-- [] Clear (Empty the number and cancel pending operation if any)
+- [x] Add
+- [x] Substract 
+- [x] Multiply
+- [x] Division
+- [x] Equals (Execute the operation)
+- [x] Clear (Empty the number and cancel pending operation if any)
 - [] Sin
 - [] Cos
 - [] Tan

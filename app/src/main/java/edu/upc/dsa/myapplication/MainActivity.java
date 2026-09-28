@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.buttonEquals)
                 .setOnClickListener(v -> calcularResultado());
 
+        findViewById(R.id.buttonClear)
+                .setOnClickListener(v -> limpiarCalculadora());
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -142,5 +145,12 @@ public class MainActivity extends AppCompatActivity {
         display.setText(String.valueOf(resultado));
         operacionPendiente = "";
         empezarNuevoNumero = true;
+    }
+
+    private void limpiarCalculadora() {
+        display.setText("0");       // Restablece el texto
+        primerNumero = 0;           // Elimina el numero guardado
+        operacionPendiente = "";    // Cancela la operacion
+        empezarNuevoNumero = true;  // La proxima cifra empieza un número nuevo
     }
 }
