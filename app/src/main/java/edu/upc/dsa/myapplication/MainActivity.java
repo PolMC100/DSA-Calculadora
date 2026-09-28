@@ -15,7 +15,9 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity {
 
     private TextView display;
-    boolean empezarNuevoNumero = false;
+    boolean empezarNuevoNumero = true;
+    private double primerNumero;
+    private String operacionPendiente = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +45,20 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.buttonPoint).setOnClickListener(v -> escribirPunto());
 
+        findViewById(R.id.buttonPlus)
+                .setOnClickListener(v -> seleccionarOperacion("+"));
 
+        findViewById(R.id.buttonMinus)
+                .setOnClickListener(v -> seleccionarOperacion("-"));
 
+        findViewById(R.id.buttonTimes)
+                .setOnClickListener(v -> seleccionarOperacion("*"));
 
+        findViewById(R.id.buttonDividedBy)
+                .setOnClickListener(v -> seleccionarOperacion("/"));
+
+        findViewById(R.id.buttonEquals)
+                .setOnClickListener(v -> calcularResultado());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -55,7 +68,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void escribirNumero(String numero) {
-        if (empezarNuevoNumero) {
+        if (display.getText().toString().charAt(0) == '0' && numero.equals("0")){ // Si hay un 0 a la izquierda no mete otro mas aunque el usuario le de
+            return;
+        }
+        else if (empezarNuevoNumero) {
             display.setText(numero);
             empezarNuevoNumero = false;
         } else {
@@ -71,5 +87,60 @@ public class MainActivity extends AppCompatActivity {
         } else if (!numeroActual.contains(".")) { // Solo se permite 1 punto por numero
             display.append(".");
         }
+    }
+
+    private void seleccionarOperacion(String operacion) {
+        String textoActual = display.getText().toString();
+
+        if (textoActual.isEmpty()) {
+            return;
+        }
+
+        primerNumero = Double.parseDouble(textoActual);
+        operacionPendiente = operacion;
+        empezarNuevoNumero = true;
+    }
+
+    private void calcularResultado() {
+        if (operacionPendiente.isEmpty()) {
+            return;
+        }
+
+        double segundoNumero =
+                Double.parseDouble(display.getText().toString());
+
+        double resultado;
+
+        switch (operacionPendiente) {
+            case "+":
+                resultado = primerNumero + segundoNumero;
+                break;
+
+            case "-":
+                resultado = primerNumero - segundoNumero;
+                break;
+
+            case "*":
+                resultado = primerNumero * segundoNumero;
+                break;
+
+            case "/":
+                if (segundoNumero == 0) {
+                    display.setText("Error al dividir por 0");
+                    operacionPendiente = "";
+                    empezarNuevoNumero = true;
+                    return;
+                }
+
+                resultado = primerNumero / segundoNumero;
+                break;
+
+            default:
+                return;
+        }
+
+        display.setText(String.valueOf(resultado));
+        operacionPendiente = "";
+        empezarNuevoNumero = true;
     }
 }
